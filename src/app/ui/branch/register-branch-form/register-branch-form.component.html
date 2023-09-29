@@ -1,1 +1,39 @@
-<button class="btn btn-primary">Boton</button>
+<form [formGroup]="branchForm" class="container mt-5 rounded-2 bg-info p-3">
+  <div class="mb-3">
+    <label for="nameInput" class="form-label">Name</label>
+    <input
+      type="text"
+      class="form-control"
+      id="nameInput"
+      aria-describedby="nameInput"
+      formControlName="name"
+    />
+  </div>
+
+  <select
+    (change)="getCities($event)"
+    class="form-select mb-3"
+    aria-label="countrySelect"
+    formControlName="country"
+  >
+    <option selected>Open this select menu</option>
+    <option *ngFor="let country of countries" [value]="country.name">
+      {{ country.name }}
+    </option>
+  </select>
+
+  <select
+    class="form-select mb-3"
+    aria-label="stateSelect"
+    formControlName="city"
+  >
+    <option selected>Open this select menu</option>
+    <option *ngFor="let state of states" [value]="state.name">
+      {{ state.name }}
+    </option>
+  </select>
+
+  <button type="button" class="btn btn-primary" (click)="registerBranch()">
+    Register
+  </button>
+</form>
