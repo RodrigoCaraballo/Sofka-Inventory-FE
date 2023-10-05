@@ -1,22 +1,17 @@
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import {
-  IRegisterBranchRequest,
-  IRegisterBranchResponse,
-} from '../domain/branch.model';
-import { HTTP_BRANCH_SERVICE } from '../infrastructure/providers/branch.api.provider';
-import { IBranchApiService } from '../infrastructure/services/interfaces/branch.api.service.interface';
+import { IRegisterUserRequest, IRegisterUserResponse } from '../domain';
+import { HTTP_USER_SERVICE } from '../infrastructure/providers';
+import { IUserApiService } from '../infrastructure/services';
 
 @Injectable({ providedIn: 'root' })
-export class RegisterBranchUseCase {
+export class RegisterUserUseCase {
   constructor(
-    @Inject(HTTP_BRANCH_SERVICE)
-    private readonly branchApiService: IBranchApiService
+    @Inject(HTTP_USER_SERVICE)
+    private readonly branchApiService: IUserApiService
   ) {}
 
-  execute(
-    newBranch: IRegisterBranchRequest
-  ): Observable<IRegisterBranchResponse> {
-    return this.branchApiService.registerBranch(newBranch);
+  execute(newUser: IRegisterUserRequest): Observable<IRegisterUserResponse> {
+    return this.branchApiService.registerUser(newUser);
   }
 }
