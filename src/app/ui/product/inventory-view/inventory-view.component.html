@@ -1,1 +1,133 @@
-<p>inventory-view works!</p>
+<div class="container my-4">
+    <nav class="col-12 justify-content-start navbar navbar-expand-lg navbar-light bg-light">
+        <a class="mx-2 nav-link active" href="/home/products">Products</a>
+        <a class="mx-2 nav-link active" href="/home/sales">Sales</a>
+    </nav>
+    <div class="container d-flex my-4" *ngIf="products">
+        <div class="col-4 mx-2">
+            <button class="btn btn-primary mx-1" (click)="addStockOn = true">
+                Register Product
+            </button>
+            <button class="btn btn-primary mx-1" (click)="addStockOn = false">
+                Add Stock
+            </button>
+
+            <form *ngIf="addStockOn" (submit)="registerProduct()" [formGroup]="registerProductForm" class="mt-2">
+                <h3>Register Product</h3>
+                <div class="mb-3">
+                    <label for="productName" class="form-label">Product Name:</label>
+                    <input type="text" id="productName" name="productName" formControlName="name" class="form-control"
+                        required />
+                    <div *ngIf="
+                registerProductForm.get('name')?.hasError('required') &&
+                registerProductForm.get('name')?.touched
+              " class="text-danger">
+                        Product Name is Required.
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="productDescription" class="form-label">Product Description:</label>
+                    <input type="text" id="productDescription" name="productDescription" formControlName="description"
+                        class="form-control" required />
+                    <div *ngIf="
+                registerProductForm.get('description')?.hasError('required') &&
+                registerProductForm.get('description')?.touched
+              " class="text-danger">
+                        Product Description is Required.
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="productPrice" class="form-label">Product Price:</label>
+                    <input type="number" id="productPrice" name="productPrice" formControlName="price"
+                        class="form-control" required />
+                    <div *ngIf="
+                registerProductForm.get('price')?.hasError('required') &&
+                registerProductForm.get('price')?.touched
+              " class="text-danger">
+                        Product Price is Required.
+                    </div>
+                </div>
+                <label for="productCategory" class="form-label">Product Category:</label>
+                <select id="productCategory" name="productCategory" formControlName="category" class="form-control"
+                    required>
+                    <option value="hand tools">Hand Tools</option>
+                    <option value="power tools">Power Tools</option>
+                    <option value="locksmithing">Locksmithing</option>
+                    <option value="construction hardware">Construction Hardware</option>
+                    <option value="paint and accessories">Paint and Accessories</option>
+                    <option value="gardening and outdoors">Gardening and Outdoors</option>
+                    <option value="safety and protective equipment">
+                        Safety and Protective Equipment
+                    </option>
+                    <option value="plumbing supplies">Plumbing Supplies</option>
+                    <option value="electrical">Electrical</option>
+                    <option value="home fixtures">Home Fixtures</option>
+                </select>
+                <div *ngIf="
+              registerProductForm.get('category')?.hasError('required') &&
+              registerProductForm.get('category')?.touched
+            " class="text-danger">
+                    Category is Required.
+                </div>
+
+                <div class="mb-3 mt-3">
+                    <button type="submit" class="btn btn-primary">
+                        Register Product
+                    </button>
+                </div>
+            </form>
+
+            <form *ngIf="!addStockOn" (submit)="addInventoryStock()" [formGroup]="registerInventoryStockForm"
+                class="mt-2">
+                <h3>Add Stock</h3>
+                <div class="mb-3">
+                    <label for="productName" class="form-label">Product Name:</label>
+                    <select id="productName" name="productName" formControlName="id" class="form-control" required>
+                        <option value="">Select Product</option>
+                        <option *ngFor="let product of products" [value]="product.id">
+                            {{ product.name }}
+                        </option>
+                    </select>
+                    <div *ngIf="
+                registerProductForm.get('id')?.hasError('required') &&
+                registerProductForm.get('id')?.touched
+              " class="text-danger">
+                        Product Name is Required.
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="productPrice" class="form-label">Stock :</label>
+                    <input type="number" id="productPrice" name="productPrice" formControlName="inventoryStock"
+                        class="form-control" required />
+                    <div *ngIf="
+                registerProductForm.get('inventoryStock')?.hasError('required') &&
+                registerProductForm.get('inventoryStock')?.touched
+              " class="text-danger">
+                        Inventory Stock is Required
+                    </div>
+                </div>
+
+                <div class="mb-3 mt-3">
+                    <button type="submit" class="btn btn-primary">Add Stock</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-8 list-group mx-2">
+            <div class="list-group-item d-flex" *ngFor="let product of products">
+                <p class="col-2">
+                    <span class="p-1 rounded-circle text-white bg-primary">{{
+                        product.inventoryStock
+                        }}</span>
+                </p>
+                <p class="col-10">Name: {{ product.name }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div *ngIf="!products">
+    <p>Loading ...</p>
+</div>

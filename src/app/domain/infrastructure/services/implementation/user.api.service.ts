@@ -10,7 +10,7 @@ import { IUserApiService } from '../interfaces';
 
 @Injectable()
 export class UserApiService implements IUserApiService {
-  private URL_USER = environment.api + '/api/v1/user';
+  private URL_USER = `${environment.apiCommands}/api/v1/user`;
 
   constructor(private readonly httpClient: HttpClient) {}
 

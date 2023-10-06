@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Country, ICountry, IState, State } from 'country-state-city';
-import { RegisterBranchUseCase } from 'src/app/domain/application/register-branch.use-case';
+import { RegisterBranchUseCase } from 'src/app/domain/application';
 import { IRegisterBranchRequest } from 'src/app/domain/domain/branch.model';
 
 @Component({

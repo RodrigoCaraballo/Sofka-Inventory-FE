@@ -12,6 +12,16 @@ const routes: Routes = [
     loadChildren: () =>
       import('./ui/branch/branch.module').then((m) => m.BranchModule),
   },
+  {
+    path: 'user',
+    loadChildren: () =>
+      import('./ui/user/user.module').then((m) => m.UserModule),
+  },
+  {
+    path: 'products',
+    loadChildren: () =>
+      import('./ui/product/product.module').then((m) => m.ProductModule),
+  },
 ];
 
 @NgModule({

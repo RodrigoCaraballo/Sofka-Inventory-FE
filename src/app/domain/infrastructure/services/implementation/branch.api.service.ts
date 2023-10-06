@@ -10,7 +10,7 @@ import { IBranchApiService } from '../interfaces';
 
 @Injectable()
 export class BranchApiService implements IBranchApiService {
-  private URL_BRANCH = environment.api + '/api/v1/branch';
+  private URL_BRANCH = `${environment.apiCommands}/api/v1/branch`;
 
   constructor(private readonly httpClient: HttpClient) {}
 

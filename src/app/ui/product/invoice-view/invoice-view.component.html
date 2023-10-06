@@ -1,1 +1,26 @@
-<p>invoice-view works!</p>
+<div class="card" *ngFor="let invoice of invoices">
+    <div class="card-header">
+        Invoice Number: {{ invoice.numberId }}
+    </div>
+    <div class="card-body-container">
+        <div class="card-body">
+            <h5 class="card-title">Products</h5>
+            <ul class="list-group">
+                <li class="list-group-item" *ngFor="let product of invoice.products">
+                    <span class="font-weight-bold">{{ product.name }}</span>
+                    <div>
+                        Price: ${{ product.price | number:'1.2-2' }}
+                    </div>
+                    <div>
+                        Quantity: {{ product.quantity }}
+                    </div>
+                </li>
+            </ul>
+            <p class="card-text mt-3">
+                <strong>Date:</strong> {{ invoice.date | date:'dd/MM/yyyy' }}<br>
+                <strong>Type:</strong> {{ invoice.type }}<br>
+                <strong>Total:</strong> ${{ invoice.total | number:'1.2-2' }}
+            </p>
+        </div>
+    </div>
+</div>
