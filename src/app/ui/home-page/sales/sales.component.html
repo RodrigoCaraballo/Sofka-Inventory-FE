@@ -1,0 +1,131 @@
+<div class="container my-4">
+  <nav
+    class="col-12 navbar justify-content-start navbar-expand-lg navbar-light bg-light"
+  >
+    <a class="mx-2 nav-link active" href="/home/products">Products</a>
+    <a class="mx-2 nav-link active" href="/home/sales">Sales</a>
+  </nav>
+  <div class="container d-flex my-4" *ngIf="sales">
+    <div class="col-4 mx-3">
+      <form [formGroup]="addProductForm" class="mt-2">
+        <h3>Register Sale</h3>
+        <form [formGroup]="registerSaleForm" class="mb-3 mx-1">
+          <div class="mb-3 col-9">
+            <label for="invoiceNumber" class="form-label">Invoice Number</label>
+            <input
+              type="text"
+              id="invoiceNumber"
+              name="invoiceNumber"
+              formControlName="invoiceNumber"
+              class="form-control"
+              required
+            />
+          </div>
+          <div class="mb-3 col-9">
+            <label for="type" class="form-label">Product</label>
+            <select
+              id="type"
+              name="type"
+              formControlName="type"
+              class="form-control"
+              required
+            >
+              <option value="Final Customer">Final Customer</option>
+              <option value="Reseller">Reseller</option>
+            </select>
+          </div>
+        </form>
+
+        <div class="d-flex">
+          <div class="mb-3 col-9">
+            <label for="productName" class="form-label">Product</label>
+            <select
+              id="productName"
+              name="productName"
+              formControlName="id"
+              class="form-control"
+              required
+            >
+              <option value="">Select Product</option>
+              <option *ngFor="let product of products" [value]="product.id">
+                {{ product.name }}
+              </option>
+            </select>
+          </div>
+
+          <div class="mb-3 col-3 mx-1">
+            <label for="quantity" class="form-label">Quantity</label>
+            <input
+              type="number"
+              id="quantity"
+              name="quantity"
+              formControlName="inventoryStock"
+              class="form-control"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="col-12 list-group">
+          <div class="list-group-item d-flex">
+            <p class="col-3">
+              <span class="">Units</span>
+            </p>
+            <p class="col-7">Product</p>
+            <p class="col-3">U/$</p>
+          </div>
+          <div class="list-group-item d-flex" *ngFor="let sale of newSales">
+            <p class="col-3">
+              <span class="p-1 rounded-circle text-white bg-primary">{{
+                sale.inventoryStock
+              }}</span>
+            </p>
+            <p class="col-7">{{ getProduct(sale.id)?.name }}</p>
+            <p class="col-3">{{ getProduct(sale.id)?.price }}</p>
+          </div>
+        </div>
+
+        <div class="mb-3 mt-3 d-flex">
+          <button
+            (click)="registerSale()"
+            type="button"
+            class="btn btn-primary mx-2"
+          >
+            Register Sale
+          </button>
+          <button
+            (click)="addOnNewSales()"
+            type="button"
+            class="btn btn-primary mx-2"
+          >
+            Add Product
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="col-8 list-group mx-3">
+      <div class="list-group-item d-flex">
+        <p class="col-2">
+          <span>Units</span>
+        </p>
+        <p class="col-4">Invoice Number</p>
+        <p class="col-3">Product</p>
+        <p class="col-3">Total</p>
+      </div>
+      <div class="list-group-item d-flex" *ngFor="let sale of sales">
+        <p class="col-2">
+          <span class="p-1 rounded-circle text-white bg-primary">{{
+            sale.quantity
+          }}</span>
+        </p>
+        <p class="col-4">{{ sale.invoiceNumber }}</p>
+        <p class="col-3">{{ sale.productName }}</p>
+        <p class="col-3">{{ getTotalSale(sale) }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="!sales">
+  <p>Loading ...</p>
+</div>

@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { RegisterBranchFormComponent } from './register-branch-form/register-branch-form.component';
+import { LoginComponent } from './login.component';
 
 const routes: Routes = [
   {
@@ -8,8 +8,8 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        title: 'Fast Inventory - Register Branch',
-        component: RegisterBranchFormComponent,
+        title: 'Login',
+        component: LoginComponent,
       },
     ],
   },
@@ -18,4 +18,4 @@ const routes: Routes = [
 @NgModule({
   imports: [RouterModule.forChild(routes)],
 })
-export class BranchRoutingModule {}
+export class LoginRoutingModule {}

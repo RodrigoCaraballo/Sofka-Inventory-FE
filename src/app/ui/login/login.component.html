@@ -1,0 +1,27 @@
+<div class="container mt-4">
+  <form [formGroup]="loginForm" (ngSubmit)="login()">
+    <div class="mb-3">
+      <label for="email" class="form-label">Email:</label>
+      <input
+        type="text"
+        id="email"
+        formControlName="email"
+        class="form-control"
+        required
+      />
+    </div>
+    <div class="mb-3">
+      <label for="password" class="form-label">Contraseña:</label>
+      <input
+        type="password"
+        id="password"
+        formControlName="password"
+        class="form-control"
+        required
+      />
+    </div>
+    <div class="mb-3">
+      <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+    </div>
+  </form>
+</div>
