@@ -5,7 +5,6 @@ import { RegisterProductUseCase } from 'src/app/domain/application/register-prod
 import {
   IBranch,
   IProduct,
-  IProductInventoryChangeSocketResponse,
   IRegisterInventoryRequest,
   IRegisterProductRequest,
 } from 'src/app/domain/domain';
@@ -60,20 +59,17 @@ export class ProductsComponent implements OnInit {
         this.products = [newProduct, ...this.products];
       });
     this.socketService
-      .listenToEvent(`new_inventory_${parsedToken.branchId}`)
+      .listenToEvent(`product_update_${parsedToken.branchId}`)
       .subscribe((data) => {
-        const newProduct = JSON.parse(
-          data
-        ) as IProductInventoryChangeSocketResponse;
+        const newProduct = JSON.parse(data) as IProduct;
 
         if (!this.products) return;
 
         const updatedProducts = this.products.map((product) => {
-          if (product.id === newProduct.product.id && product.inventoryStock)
+          if (product.id === newProduct.id)
             return {
               ...product,
-              inventoryStock:
-                product.inventoryStock + newProduct.product.inventoryStock,
+              inventoryStock: newProduct.inventoryStock,
             };
 
           return product;

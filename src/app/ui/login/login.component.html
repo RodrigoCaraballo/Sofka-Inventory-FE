@@ -1,4 +1,7 @@
 <div class="container mt-4">
+  <div *ngIf="errorMessage" class="text-danger">
+    {{ errorMessage }}
+  </div>
   <form [formGroup]="loginForm" (ngSubmit)="login()">
     <div class="mb-3">
       <label for="email" class="form-label">Email:</label>
@@ -10,6 +13,15 @@
         required
       />
     </div>
+    <div
+      *ngIf="
+        loginForm.get('email')?.hasError('required') &&
+        loginForm.get('email')?.touched
+      "
+      class="text-danger"
+    >
+      Product Name is Required.
+    </div>
     <div class="mb-3">
       <label for="password" class="form-label">Contraseña:</label>
       <input
@@ -19,6 +31,15 @@
         class="form-control"
         required
       />
+    </div>
+    <div
+      *ngIf="
+        loginForm.get('password')?.hasError('required') &&
+        loginForm.get('password')?.touched
+      "
+      class="text-danger"
+    >
+      Product Name is Required.
     </div>
     <div class="mb-3">
       <button type="submit" class="btn btn-primary">Iniciar Sesión</button>

@@ -20,6 +20,8 @@ export class LoginComponent {
     password: ['', Validators.required],
   });
 
+  errorMessage?: string;
+
   constructor(
     private authUseCase: AuthUseCase,
     private formBuilder: FormBuilder,
@@ -29,12 +31,28 @@ export class LoginComponent {
   login(): void {
     if (!this.loginForm.valid) return;
 
-    this.authUseCase
-      .execute(this.loginForm.value as AuthData)
-      .subscribe((token: AuthReponse) => {
+    this.authUseCase.execute(this.loginForm.value as AuthData).subscribe({
+      next: (token: AuthReponse) => {
         const tokenData: JWTModel = jwt_decode(token.token);
         localStorage.setItem('token', JSON.stringify(tokenData));
         this.router.navigateByUrl('/home');
-      });
+      },
+      error: (error) => {
+        if (error?.message) {
+          this.errorMessage = error.message;
+
+          setTimeout(() => {
+            this.errorMessage = undefined;
+          }, 2000);
+
+          return;
+        }
+
+        this.errorMessage = 'Error trying to login';
+        setTimeout(() => {
+          this.errorMessage = undefined;
+        }, 2000);
+      },
+    });
   }
 }
