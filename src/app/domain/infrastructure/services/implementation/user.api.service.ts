@@ -10,7 +10,7 @@ import { IUserApiService } from '../interfaces';
 
 @Injectable()
 export class UserApiService implements IUserApiService {
-  private URL_BRANCH = environment.api + '/api/v1/branch';
+  private URL_USER = environment.api + '/api/v1/user';
 
   constructor(private readonly httpClient: HttpClient) {}
 
@@ -18,7 +18,7 @@ export class UserApiService implements IUserApiService {
     newUser: IRegisterUserRequest
   ): Observable<IRegisterUserResponse> {
     return this.httpClient.post<IRegisterUserResponse>(
-      `${this.URL_BRANCH}/register`,
+      `${this.URL_USER}/register`,
       newUser
     );
   }

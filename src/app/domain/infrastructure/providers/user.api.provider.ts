@@ -1,6 +1,6 @@
 import { InjectionToken } from '@angular/core';
-import { IBranchApiService } from '../services/interfaces/branch.api.service.interface';
+import { IUserApiService } from '../services/interfaces';
 
-export const HTTP_USER_SERVICE = new InjectionToken<IBranchApiService>(
-  'BranchApiService'
+export const HTTP_USER_SERVICE = new InjectionToken<IUserApiService>(
+  'UserApiService'
 );

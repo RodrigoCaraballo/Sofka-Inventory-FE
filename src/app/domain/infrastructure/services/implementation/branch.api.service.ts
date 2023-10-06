@@ -4,9 +4,9 @@ import { Observable } from 'rxjs';
 import {
   IRegisterBranchRequest,
   IRegisterBranchResponse,
-} from 'src/app/domain/domain/branch.model';
+} from 'src/app/domain/domain';
 import { environment } from 'src/environments/environment';
-import { IBranchApiService } from '../interfaces/branch.api.service.interface';
+import { IBranchApiService } from '../interfaces';
 
 @Injectable()
 export class BranchApiService implements IBranchApiService {
