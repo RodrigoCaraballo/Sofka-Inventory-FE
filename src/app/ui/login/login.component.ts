@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -29,17 +30,20 @@ export class LoginComponent {
   ) {}
 
   login(): void {
-    if (!this.loginForm.valid) return;
+    if (!this.loginForm.valid) {
+      this.loginForm.markAllAsTouched();
+      return;
+    }
 
     this.authUseCase.execute(this.loginForm.value as AuthData).subscribe({
       next: (token: AuthReponse) => {
         const tokenData: JWTModel = jwt_decode(token.token);
         localStorage.setItem('token', JSON.stringify(tokenData));
-        this.router.navigateByUrl('/home');
+        this.router.navigateByUrl('/home/products');
       },
-      error: (error) => {
-        if (error?.message) {
-          this.errorMessage = error.message;
+      error: (error: HttpErrorResponse) => {
+        if (error.error?.message) {
+          this.errorMessage = error.error?.message;
 
           setTimeout(() => {
             this.errorMessage = undefined;

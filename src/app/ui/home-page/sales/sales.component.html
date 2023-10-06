@@ -9,6 +9,9 @@
     <div class="col-4 mx-3">
       <form [formGroup]="addProductForm" class="mt-2">
         <h3>Register Sale</h3>
+        <div *ngIf="errorMessage">
+          <p class="text-danger">{{ errorMessage }}</p>
+        </div>
         <form [formGroup]="registerSaleForm" class="mb-3 mx-1">
           <div class="mb-3 col-9">
             <label for="invoiceNumber" class="form-label">Invoice Number</label>
@@ -20,6 +23,33 @@
               class="form-control"
               required
             />
+            <div
+              *ngIf="
+                registerSaleForm.get('invoiceNumber')?.hasError('required') &&
+                registerSaleForm.get('invoiceNumber')?.touched
+              "
+              class="text-danger"
+            >
+              Invoice Number is Required
+            </div>
+            <div
+              *ngIf="
+                registerSaleForm.get('invoiceNumber')?.hasError('minlength') &&
+                registerSaleForm.get('invoiceNumber')?.touched
+              "
+              class="text-danger"
+            >
+              Invoice Number require at least 1 character
+            </div>
+            <div
+              *ngIf="
+                registerSaleForm.get('invoiceNumber')?.hasError('maxlength') &&
+                registerSaleForm.get('invoiceNumber')?.touched
+              "
+              class="text-danger"
+            >
+              Invoice Number limit 100 characters
+            </div>
           </div>
           <div class="mb-3 col-9">
             <label for="type" class="form-label">Product</label>
@@ -30,9 +60,19 @@
               class="form-control"
               required
             >
+              <option value="">Select Type</option>
               <option value="Final Customer">Final Customer</option>
               <option value="Reseller">Reseller</option>
             </select>
+            <div
+              *ngIf="
+                registerSaleForm.get('type')?.hasError('required') &&
+                registerSaleForm.get('type')?.touched
+              "
+              class="text-danger"
+            >
+              Type of Sale is Required
+            </div>
           </div>
         </form>
 
@@ -51,6 +91,15 @@
                 {{ product.name }}
               </option>
             </select>
+            <div
+              *ngIf="
+                addProductForm.get('id')?.hasError('required') &&
+                addProductForm.get('id')?.touched
+              "
+              class="text-danger"
+            >
+              Product is Required
+            </div>
           </div>
 
           <div class="mb-3 col-3 mx-1">
@@ -63,6 +112,24 @@
               class="form-control"
               required
             />
+            <div
+              *ngIf="
+                addProductForm.get('inventoryStock')?.hasError('required') &&
+                addProductForm.get('inventoryStock')?.touched
+              "
+              class="text-danger"
+            >
+              Quantity is Required
+            </div>
+            <div
+              *ngIf="
+                addProductForm.get('inventoryStock')?.hasError('min') &&
+                addProductForm.get('inventoryStock')?.touched
+              "
+              class="text-danger"
+            >
+              Quantity must be greater than 0
+            </div>
           </div>
         </div>
 

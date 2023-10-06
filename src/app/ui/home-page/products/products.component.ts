@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { RegisterProductInventoryStockUseCase } from 'src/app/domain/application/register-product-inventory-stock.use-case';
@@ -21,18 +22,25 @@ import { GetBranchUseCase } from '../../../domain/application/get-branch.use-cas
 export class ProductsComponent implements OnInit {
   products?: IProduct[];
   addStockOn: boolean = false;
+  errorMessage?: string;
 
   registerProductForm = this.formBuilder.group({
-    name: ['', Validators.required],
-    description: ['', Validators.required],
-    price: ['', Validators.required],
+    name: [
+      '',
+      [Validators.required, Validators.minLength(3), Validators.maxLength(100)],
+    ],
+    description: [
+      '',
+      [Validators.required, Validators.minLength(3), Validators.maxLength(256)],
+    ],
+    price: ['', [Validators.required, Validators.min(1)]],
     category: ['', Validators.required],
     branchId: ['', Validators.required],
   });
 
   registerInventoryStockForm = this.formBuilder.group({
     id: ['', Validators.required],
-    inventoryStock: ['', Validators.required],
+    inventoryStock: ['', [Validators.required, Validators.min(1)]],
   });
 
   constructor(
@@ -99,7 +107,11 @@ export class ProductsComponent implements OnInit {
 
     this.registerProductForm.patchValue({ branchId: parsedToken.branchId });
 
-    if (!this.registerProductForm.valid) return;
+    if (!this.registerProductForm.valid) {
+      this.registerProductForm.markAllAsTouched();
+
+      return;
+    }
 
     this.registerProductUseCase
       .execute(
@@ -107,8 +119,23 @@ export class ProductsComponent implements OnInit {
       )
       .subscribe({
         next: (response: CommandResponse) => {
-          console.log(response);
           this.registerProductForm.reset();
+        },
+        error: (response: HttpErrorResponse) => {
+          if (response.error?.message) {
+            this.errorMessage = response.error.message;
+            setTimeout(() => {
+              this.errorMessage = undefined;
+            }, 2000);
+
+            return;
+          }
+
+          this.errorMessage = 'Error trying to register a product';
+
+          setTimeout(() => {
+            this.errorMessage = undefined;
+          }, 2000);
         },
       });
   }
@@ -123,8 +150,10 @@ export class ProductsComponent implements OnInit {
       !this.registerInventoryStockForm.valid ||
       !this.registerInventoryStockForm.value.id ||
       !this.registerInventoryStockForm.value.inventoryStock
-    )
+    ) {
+      this.registerInventoryStockForm.markAllAsTouched();
       return;
+    }
 
     const formData: IRegisterInventoryRequest = {
       branchId: parsedToken.branchId,
@@ -139,6 +168,22 @@ export class ProductsComponent implements OnInit {
     this.registerProductInventoryUseCase.execute(formData).subscribe({
       next: (response: CommandResponse) => {
         this.registerInventoryStockForm.reset();
+      },
+      error: (response: HttpErrorResponse) => {
+        if (response.error?.message) {
+          this.errorMessage = response.error.message;
+          setTimeout(() => {
+            this.errorMessage = undefined;
+          }, 2000);
+
+          return;
+        }
+
+        this.errorMessage = 'Error trying to add stock to product';
+
+        setTimeout(() => {
+          this.errorMessage = undefined;
+        }, 2000);
       },
     });
   }

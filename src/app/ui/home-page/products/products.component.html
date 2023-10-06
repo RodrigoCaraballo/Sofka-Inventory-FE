@@ -14,6 +14,10 @@
         Add Stock
       </button>
 
+      <div *ngIf="errorMessage">
+        <p class="text-danger">{{ errorMessage }}</p>
+      </div>
+
       <form
         *ngIf="addStockOn"
         (submit)="registerProduct()"
@@ -38,7 +42,25 @@
             "
             class="text-danger"
           >
-            Product Name is Required.
+            Product Description is Required.
+          </div>
+          <div
+            *ngIf="
+              registerProductForm.get('name')?.hasError('minlength') &&
+              registerProductForm.get('name')?.touched
+            "
+            class="text-danger"
+          >
+            Product Name require at least 3 characters.
+          </div>
+          <div
+            *ngIf="
+              registerProductForm.get('name')?.hasError('maxlength') &&
+              registerProductForm.get('name')?.touched
+            "
+            class="text-danger"
+          >
+            Product Name limit 100 characters.
           </div>
         </div>
 
@@ -63,6 +85,24 @@
           >
             Product Description is Required.
           </div>
+          <div
+            *ngIf="
+              registerProductForm.get('description')?.hasError('minlength') &&
+              registerProductForm.get('description')?.touched
+            "
+            class="text-danger"
+          >
+            Product Description require at least 3 characters.
+          </div>
+          <div
+            *ngIf="
+              registerProductForm.get('description')?.hasError('maxlength') &&
+              registerProductForm.get('description')?.touched
+            "
+            class="text-danger"
+          >
+            Product Description limit 256 characters.
+          </div>
         </div>
 
         <div class="mb-3">
@@ -84,6 +124,15 @@
           >
             Product Price is Required.
           </div>
+          <div
+            *ngIf="
+              registerProductForm.get('price')?.hasError('min') &&
+              registerProductForm.get('price')?.touched
+            "
+            class="text-danger"
+          >
+            Product Price must be greater than 0
+          </div>
         </div>
         <label for="productCategory" class="form-label"
           >Product Category:</label
@@ -95,6 +144,7 @@
           class="form-control"
           required
         >
+          <option value="">Select Category</option>
           <option value="hand tools">Hand Tools</option>
           <option value="power tools">Power Tools</option>
           <option value="locksmithing">Locksmithing</option>
@@ -107,6 +157,7 @@
           <option value="plumbing supplies">Plumbing Supplies</option>
           <option value="electrical">Electrical</option>
           <option value="home fixtures">Home Fixtures</option>
+          <option value="others">Others</option>
         </select>
         <div
           *ngIf="
@@ -148,8 +199,8 @@
           </select>
           <div
             *ngIf="
-              registerProductForm.get('id')?.hasError('required') &&
-              registerProductForm.get('id')?.touched
+              registerInventoryStockForm.get('id')?.hasError('required') &&
+              registerInventoryStockForm.get('id')?.touched
             "
             class="text-danger"
           >
@@ -169,12 +220,25 @@
           />
           <div
             *ngIf="
-              registerProductForm.get('inventoryStock')?.hasError('required') &&
-              registerProductForm.get('inventoryStock')?.touched
+              registerInventoryStockForm
+                .get('inventoryStock')
+                ?.hasError('required') &&
+              registerInventoryStockForm.get('inventoryStock')?.touched
             "
             class="text-danger"
           >
             Inventory Stock is Required
+          </div>
+          <div
+            *ngIf="
+              registerInventoryStockForm
+                .get('inventoryStock')
+                ?.hasError('min') &&
+              registerInventoryStockForm.get('inventoryStock')?.touched
+            "
+            class="text-danger"
+          >
+            Inventory Stock must be greater than 0
           </div>
         </div>
 

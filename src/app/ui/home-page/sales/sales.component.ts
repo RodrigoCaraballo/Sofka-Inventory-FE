@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { GetBranchUseCase } from 'src/app/domain/application/get-branch.use-case';
@@ -24,6 +25,8 @@ import { RegisterFinalCustomerSaleUseCase } from '../../../domain/application/re
 export class SalesComponent implements OnInit {
   sales: ISale[] = [];
   products: IProduct[] = [];
+
+  errorMessage?: string;
 
   newSales: ProductInventoryData[] = [];
 
@@ -56,11 +59,14 @@ export class SalesComponent implements OnInit {
 
   addProductForm = this.formBuilder.group({
     id: ['', Validators.required],
-    inventoryStock: ['', Validators.required],
+    inventoryStock: ['', [Validators.required, Validators.min(1)]],
   });
 
   registerSaleForm = this.formBuilder.group({
-    invoiceNumber: ['', Validators.required],
+    invoiceNumber: [
+      '',
+      [Validators.required, Validators.minLength(1), Validators.maxLength(100)],
+    ],
     type: ['', Validators.required],
   });
 
@@ -94,7 +100,12 @@ export class SalesComponent implements OnInit {
   }
 
   addOnNewSales() {
-    if (!this.addProductForm.valid) return;
+    if (!this.addProductForm.valid) {
+      this.addProductForm.markAllAsTouched();
+      return;
+    }
+
+    console.log(this.addProductForm.value.id);
 
     const updateSales = [
       ...this.newSales,
@@ -115,7 +126,13 @@ export class SalesComponent implements OnInit {
 
     const parsedToken: JWTModel = JSON.parse(token);
 
-    if (!this.registerSaleForm.value.invoiceNumber) return;
+    if (
+      !this.registerSaleForm.value.invoiceNumber ||
+      !this.registerSaleForm.value.type
+    ) {
+      this.registerSaleForm.markAllAsTouched();
+      return;
+    }
 
     const request: IRegisterSaleRequest = {
       branchId: parsedToken.branchId,
@@ -134,6 +151,25 @@ export class SalesComponent implements OnInit {
     this.registerResellerSaleUseCase.execute(request).subscribe({
       next: (response: CommandResponse) => {
         console.log(response);
+        this.registerSaleForm.reset();
+      },
+      error: (response: HttpErrorResponse) => {
+        console.log(response);
+
+        if (response.error?.message) {
+          this.errorMessage = response.error.message;
+          setTimeout(() => {
+            this.errorMessage = undefined;
+          }, 2000);
+
+          return;
+        }
+
+        this.errorMessage = 'Error trying to register a product';
+
+        setTimeout(() => {
+          this.errorMessage = undefined;
+        }, 2000);
       },
     });
   }
@@ -142,6 +178,23 @@ export class SalesComponent implements OnInit {
     this.registerFinalCustomerSaleUseCase.execute(request).subscribe({
       next: (response: CommandResponse) => {
         console.log(response);
+        this.registerSaleForm.reset();
+      },
+      error: (response: HttpErrorResponse) => {
+        if (response.error?.message) {
+          this.errorMessage = response.error.message;
+          setTimeout(() => {
+            this.errorMessage = undefined;
+          }, 2000);
+
+          return;
+        }
+
+        this.errorMessage = 'Error trying to register a product';
+
+        setTimeout(() => {
+          this.errorMessage = undefined;
+        }, 2000);
       },
     });
   }
