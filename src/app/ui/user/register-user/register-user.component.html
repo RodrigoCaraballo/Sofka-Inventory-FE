@@ -1,1 +1,30 @@
-<p>register-user works!</p>
+<div class="register-user container mt-5 rounded-2 bg-info p-3">
+    <h2 class="mb-3">Registrar Usuario</h2>
+    <form [formGroup]="registrationForm" (ngSubmit)="registerUser()">
+        <div class="mb-3">
+            <label for="firstName" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="firstName" formControlName="firstName" />
+        </div>
+        <div class="mb-3">
+            <label for="lastName" class="form-label">Apellido</label>
+            <input type="text" class="form-control" id="lastName" formControlName="lastName" />
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">Correo electrónico</label>
+            <input type="email" class="form-control" id="email" formControlName="email" />
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Contraseña</label>
+            <input type="password" class="form-control" id="password" formControlName="password" />
+        </div>
+        <div class="mb-3">
+            <label for="branch" class="form-label">Sucursal</label>
+            <select class="form-select" id="branch" formControlName="branch">
+                <option value="" disabled selected>Selecciona una sucursal</option>
+                <option *ngFor="let branch of branches" [value]="branch.name">{{ branch.name }}</option>
+            </select>
+        </div>
+        <button type="submit" [disabled]="!registrationForm.valid" class="btn btn-primary">Registrar</button>
+    </form>
+    <div *ngIf="errorMessage" class="error-message mt-3">{{ errorMessage }}</div>
+</div>

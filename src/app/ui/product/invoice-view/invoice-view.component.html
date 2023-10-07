@@ -1,26 +1,118 @@
-<div class="card" *ngFor="let invoice of invoices">
-    <div class="card-header">
-        Invoice Number: {{ invoice.numberId }}
-    </div>
-    <div class="card-body-container">
-        <div class="card-body">
-            <h5 class="card-title">Products</h5>
-            <ul class="list-group">
-                <li class="list-group-item" *ngFor="let product of invoice.products">
-                    <span class="font-weight-bold">{{ product.name }}</span>
-                    <div>
-                        Price: ${{ product.price | number:'1.2-2' }}
+<div class="container my-4">
+    <div class="container d-flex my-4" *ngIf="invoices">
+        <div class="col-4 mx-3">
+            <!-- Formulario de registro de venta -->
+            <h3>Register Sale</h3>
+            <!-- Type of Sale -->
+            <form [formGroup]="registerSaleForm" class="mt-2">
+                <div class="mb-3 col-9">
+                    <label for="type" class="form-label">Type</label>
+                    <select id="type" name="type" formControlName="type" class="form-control" required>
+                        <option value="" disabled selected>Select Type</option>
+                        <option value="Final Customer">Final Customer</option>
+                        <option value="Reseller">Reseller</option>
+                    </select>
+                    <div *ngIf="registerSaleForm.get('type')?.hasError('required') && registerSaleForm.get('type')?.touched"
+                        class="text-danger">
+                        Type of Sale is Required
                     </div>
-                    <div>
-                        Quantity: {{ product.quantity }}
+                </div>
+            </form>
+            <form [formGroup]="addProductForm" class="mt-2">
+
+                <!-- Product selection -->
+                <div class="d-flex">
+                    <div class="mb-3 col-9">
+                        <label for="productName" class="form-label">Product</label>
+                        <select id="productName" name="productName" formControlName="id" class="form-control" required>
+                            <option value="" disabled selected>Select Product</option>
+                            <option *ngFor="let product of products" [value]="product.id">{{ product.name }}</option>
+                        </select>
+                        <div *ngIf="addProductForm.get('id')?.hasError('required') && addProductForm.get('id')?.touched"
+                            class="text-danger">
+                            Product is Required
+                        </div>
                     </div>
-                </li>
-            </ul>
-            <p class="card-text mt-3">
-                <strong>Date:</strong> {{ invoice.date | date:'dd/MM/yyyy' }}<br>
-                <strong>Type:</strong> {{ invoice.type }}<br>
-                <strong>Total:</strong> ${{ invoice.total | number:'1.2-2' }}
-            </p>
+
+                    <!-- Quantity -->
+                    <div class="mb-3 col-3 mx-1">
+                        <label for="quantity" class="form-label">Quantity</label>
+                        <input type="number" id="quantity" name="quantity" formControlName="quantity"
+                            class="form-control" required />
+                        <div *ngIf="addProductForm.get('quantity')?.hasError('required') && addProductForm.get('quantity')?.touched"
+                            class="text-danger">
+                            Quantity is Required
+                        </div>
+                        <div *ngIf="addProductForm.get('quantity')?.hasError('min') && addProductForm.get('quantity')?.touched"
+                            class="text-danger">
+                            Quantity must be greater than 0
+                        </div>
+                    </div>
+                </div>
+
+                <!-- List of sales -->
+                <div class="col-12 list-group">
+                    <div class="list-group-item d-flex">
+                        <p class="col-3"><span class="">Units</span></p>
+                        <p class="col-7">Product</p>
+                        <p class="col-3">U/$</p>
+                    </div>
+
+                    <!-- Sales details -->
+                    <div class="list-group-item d-flex" *ngFor="let sale of newSales">
+                        <p class="col-3">
+                            <span class="p-1 rounded-circle text-white bg-primary">{{ sale.quantity }}</span>
+                        </p>
+                        <p class="col-7">{{ getProduct(sale.id)?.name }}</p>
+                        <p class="col-3">{{ getProduct(sale.id)?.price }}</p>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="mb-3 mt-3 d-flex">
+                    <button (click)="registerSale()" type="button" class="btn btn-primary mx-2">Register Sale</button>
+                    <button (click)="addOnNewSales()" type="button" class="btn btn-primary mx-2">Add Product</button>
+                </div>
+            </form>
         </div>
+
+        <!-- List of invoices -->
+        <div class="col-8 list-group mx-3">
+            <div class="list-group-item d-flex">
+                <p class="col-1"><span>Invoice Number</span></p>
+                <p class="col-6">Products</p>
+                <p class="col-2">Total</p>
+                <p class="col-3">Date</p>
+            </div>
+
+            <!-- Invoice details -->
+            <div class="list-group-item d-flex" *ngFor="let invoice of invoices">
+                <p class="col-1"><span class="p-1 rounded-circle text-white bg-primary">{{ invoice.numberId }}</span>
+                </p>
+
+                <!-- Product details per invoice -->
+                <div class="col-6 list-group mx-3">
+                    <div class="list-group-item d-flex">
+                        <p class="col-5">Name</p>
+                        <p class="col-3">Quantity</p>
+                        <p class="col-4">Price</p>
+                    </div>
+
+                    <div class="list-group-item d-flex" *ngFor="let product of invoice.products">
+                        <p class="col-5">{{ product.name }}</p>
+                        <p class="col-3">{{ product.quantity }}</p>
+                        <p class="col-4">{{ product.price }}</p>
+                    </div>
+                </div>
+
+                <p class="col-2">{{ invoice.total }}</p>
+                <p class="col-3">{{ invoice.date }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading message -->
+    <div *ngIf="!sales">
+        <p>Loading ...</p>
     </div>
 </div>

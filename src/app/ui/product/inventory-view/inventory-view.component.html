@@ -85,7 +85,7 @@
                 <div class="mb-3">
                     <label for="productName" class="form-label">Product Name:</label>
                     <select id="productName" name="productName" formControlName="id" class="form-control" required>
-                        <option value="">Select Product</option>
+                        <option value="" disabled selected>Select Product</option>
                         <option *ngFor="let product of products" [value]="product.id">
                             {{ product.name }}
                         </option>
@@ -120,7 +120,7 @@
             <div class="list-group-item d-flex" *ngFor="let product of products">
                 <p class="col-2">
                     <span class="p-1 rounded-circle text-white bg-primary">{{
-                        product.inventoryStock
+                        product.quantity
                         }}</span>
                 </p>
                 <p class="col-10">Name: {{ product.name }}</p>

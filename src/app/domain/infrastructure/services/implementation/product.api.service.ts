@@ -4,12 +4,13 @@ import { Observable } from 'rxjs';
 import {
   IProductDomainEntity,
   IPurchaseProductRequest,
-  IPurchaseProductResponse,
+  IRegisterInventoryRequest,
   IRegisterProductRequest,
-  IRegisterProductResponse,
 } from 'src/app/domain/domain';
 import { environment } from 'src/environments/environment';
 import { IProductApiService } from '../interfaces';
+import { CommandResponse } from 'src/app/domain/domain/reponse.model';
+import { IRegisterSaleRequest } from 'src/app/domain/domain/sales.model';
 
 @Injectable()
 export class ProductApiService implements IProductApiService {
@@ -17,11 +18,36 @@ export class ProductApiService implements IProductApiService {
   private URL_QUERY = `${environment.apiQueries}/api/v1/product`;
 
   constructor(private readonly httpClient: HttpClient) {}
+  registerFinalCustomerSale(
+    sale: IRegisterSaleRequest
+  ): Observable<CommandResponse> {
+    return this.httpClient.patch<CommandResponse>(
+      `${this.URL_COMMAND}/sale/customer`,
+      sale
+    );
+  }
+  registerResellerSale(
+    sale: IRegisterSaleRequest
+  ): Observable<CommandResponse> {
+    sale.discount = 0.3;
+    return this.httpClient.patch<CommandResponse>(
+      `${this.URL_COMMAND}/sale/seller`,
+      sale
+    );
+  }
+  registerInventoryStock(
+    newProduct: IRegisterInventoryRequest
+  ): Observable<CommandResponse> {
+    return this.httpClient.patch<CommandResponse>(
+      `${this.URL_COMMAND}/purchase`,
+      newProduct
+    );
+  }
 
   registerProduct(
     newProduct: IRegisterProductRequest
-  ): Observable<IRegisterProductResponse> {
-    return this.httpClient.post<IRegisterProductResponse>(
+  ): Observable<CommandResponse> {
+    return this.httpClient.post<CommandResponse>(
       `${this.URL_COMMAND}/register`,
       newProduct
     );
@@ -29,8 +55,8 @@ export class ProductApiService implements IProductApiService {
 
   registerProductPurchase(
     newProduct: IPurchaseProductRequest
-  ): Observable<IPurchaseProductResponse> {
-    return this.httpClient.patch<IPurchaseProductResponse>(
+  ): Observable<CommandResponse> {
+    return this.httpClient.patch<CommandResponse>(
       `${this.URL_COMMAND}/purchase`,
       newProduct
     );

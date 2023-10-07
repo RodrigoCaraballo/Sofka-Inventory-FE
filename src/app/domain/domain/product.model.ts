@@ -46,3 +46,13 @@ export interface IPurchaseProductResponse {
 export interface IAllProductsResponse {
   products: IProductDomainEntity[];
 }
+
+export interface IRegisterInventoryRequest {
+  id: string;
+  quantity: number;
+}
+
+export type ProductInventoryData = {
+  productId: string;
+  quantity: number;
+};

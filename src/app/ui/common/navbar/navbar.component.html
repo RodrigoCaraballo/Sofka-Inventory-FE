@@ -6,13 +6,22 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-                <a class="nav-link" routerLink="/">Inicio</a>
+            <li class="nav-item" *ngIf="!isTokenAvailable()">
+                <a class="nav-link" routerLink="/">Login</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" *ngIf="isTokenAvailable()">
+                <a class="nav-link" (click)="logout()">Logout</a>
+            </li>
+            <li class="nav-item" *ngIf="!isTokenAvailable()">
+                <a class="nav-link" routerLink="/branch">Registrar Sede</a>
+            </li>
+            <li class="nav-item" *ngIf="!isTokenAvailable()">
+                <a class="nav-link" routerLink="/register-user">Registrar User</a>
+            </li>
+            <li class="nav-item" *ngIf="isTokenAvailable()">
                 <a class="nav-link" routerLink="/products">Productos</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" *ngIf="isTokenAvailable()">
                 <a class="nav-link" routerLink="/products/invoices">Facturas</a>
             </li>
         </ul>

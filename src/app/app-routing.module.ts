@@ -4,8 +4,13 @@ import { RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'branch',
+    redirectTo: 'login',
     pathMatch: 'full',
+  },
+  {
+    path: 'login',
+    loadChildren: () =>
+      import('./ui/login/login.module').then((m) => m.LoginModule),
   },
   {
     path: 'branch',
@@ -13,7 +18,7 @@ const routes: Routes = [
       import('./ui/branch/branch.module').then((m) => m.BranchModule),
   },
   {
-    path: 'user',
+    path: 'register-user',
     loadChildren: () =>
       import('./ui/user/user.module').then((m) => m.UserModule),
   },
