@@ -10,7 +10,7 @@ export class SocketApiService implements ISocketApiService {
   socket: any;
 
   constructor() {
-    this.socket = io('ws://localhost:3004');
+    this.socket = io(`ws://${window._env.SOCKET_API}`);
   }
   listenToEvent(eventName: string): Observable<any> {
     return new Observable((observer) => {

@@ -6,13 +6,12 @@ import {
   IRegisterBranchRequest,
   IRegisterBranchResponse,
 } from 'src/app/domain/domain/branch.model';
-import { environment } from 'src/environments/environment';
 import { IBranchApiService } from '../interfaces/branch.api.service.interface';
 
 @Injectable()
 export class BranchApiService implements IBranchApiService {
-  private URL_BRANCH_COMMAND = environment.commandApi + '/api/v1/branch';
-  private URL_BRANCH_QUERY = environment.queryApi + '/api/v1/branch';
+  private URL_BRANCH_COMMAND = `http://${window._env.COMMAND_API}/api/v1/branch`;
+  private URL_BRANCH_QUERY = `http://${window._env.QUERY_API}/api/v1/branch`;
 
   constructor(private readonly httpClient: HttpClient) {}
 

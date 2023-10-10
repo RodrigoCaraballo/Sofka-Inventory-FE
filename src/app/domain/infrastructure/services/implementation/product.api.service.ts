@@ -7,12 +7,11 @@ import {
   IRegisterSaleRequest,
 } from 'src/app/domain/domain';
 import { CommandResponse } from 'src/app/domain/domain/reponse.model';
-import { environment } from 'src/environments/environment';
 import { IProductApiService } from '../interfaces/product.api.service.interface';
 
 @Injectable()
 export class ProductApiService implements IProductApiService {
-  private URL_BRANCH_COMMAND = environment.commandApi + '/api/v1/product';
+  private URL_BRANCH_COMMAND = `http://${window._env.COMMAND_API}/api/v1/product`;
 
   constructor(private readonly httpClient: HttpClient) {}
   registerFinalCustomerSale(
