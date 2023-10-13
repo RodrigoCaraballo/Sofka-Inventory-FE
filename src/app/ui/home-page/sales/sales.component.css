@@ -1,0 +1,4 @@
+.pdf-content {
+  /* Ajusta los estilos para que el contenido se ajuste en una sola página */
+  page-break-before: always; /* Intenta evitar saltos de página antes de este contenido */
+}

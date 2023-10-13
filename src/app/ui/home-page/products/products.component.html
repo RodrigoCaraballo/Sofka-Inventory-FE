@@ -39,6 +39,9 @@
       <div *ngIf="errorMessage">
         <p class="text-danger">{{ errorMessage }}</p>
       </div>
+      <div *ngIf="successMessage">
+        <p class="text-success">{{ successMessage }}</p>
+      </div>
 
       <form
         *ngIf="addStockOn"
@@ -205,6 +208,9 @@
         class="mt-2"
       >
         <h3>Add Stock</h3>
+
+        <input type="file" #fileInput (change)="onFileChange($event)" />
+
         <div class="mb-3">
           <label for="productName" class="form-label">Product Name:</label>
           <select

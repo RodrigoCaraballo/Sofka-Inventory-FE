@@ -59,12 +59,12 @@ export class ProductApiService implements IProductApiService {
   }
 
   registerInventoryStock(
-    inventoryStock: IRegisterInventoryRequest
+    inventoryStocks: IRegisterInventoryRequest[]
   ): Observable<CommandResponse> {
     const token = localStorage.getItem('token');
     return this.httpClient.post<CommandResponse>(
       `${this.URL_BRANCH_COMMAND}/purchase`,
-      inventoryStock,
+      inventoryStocks,
       {
         headers: new HttpHeaders({
           Authorization: `Bearer ${token}`,

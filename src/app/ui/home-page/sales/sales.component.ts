@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { jsPDF } from 'jspdf';
 import jwt_decode from 'jwt-decode';
 import { GetBranchUseCase } from 'src/app/domain/application/get-branch.use-case';
 import { GetSalesUseCase } from 'src/app/domain/application/get-sales.use-case';
@@ -26,11 +27,13 @@ import { RegisterFinalCustomerSaleUseCase } from '../../../domain/application/re
 export class SalesComponent implements OnInit {
   sales: ISale[] = [];
   products: IProduct[] = [];
+  filteredSales: ISale[] = [];
+  filterSelected: string = '';
   decodeUser?: JWTModel;
-
+  newSales: ProductInventoryData[] = [];
   errorMessage?: string;
 
-  newSales: ProductInventoryData[] = [];
+  @ViewChild('salesDiv', { static: false }) salesDiv!: ElementRef;
 
   constructor(
     private readonly getBranchUseCase: GetBranchUseCase,
@@ -57,6 +60,24 @@ export class SalesComponent implements OnInit {
         if (!this.products) return;
 
         this.sales = [...newSales, ...this.sales];
+
+        if (this.filterSelected === 'final customer') {
+          const finalCustomerSales = newSales.filter(
+            (sale) => sale.type?.toLocaleLowerCase() !== 'final customer'
+          );
+
+          this.filteredSales = [...finalCustomerSales, ...this.filteredSales];
+          return;
+        } else if (this.filterSelected === 'reseller') {
+          const finalCustomerSales = newSales.filter(
+            (sale) => sale.type?.toLocaleLowerCase() !== 'reseller'
+          );
+
+          this.filteredSales = [...finalCustomerSales, ...this.filteredSales];
+          return;
+        } else {
+          this.filteredSales = [...newSales, ...this.filteredSales];
+        }
       });
   }
 
@@ -87,6 +108,7 @@ export class SalesComponent implements OnInit {
     this.getSalesUseCase.execute(this.decodeUser.branchId).subscribe({
       next: (sales: ISale[]) => {
         this.sales = sales;
+        this.filteredSales = sales;
       },
     });
   }
@@ -185,6 +207,53 @@ export class SalesComponent implements OnInit {
         setTimeout(() => {
           this.errorMessage = undefined;
         }, 2000);
+      },
+    });
+  }
+
+  filterSales(event: Event) {
+    const selectValue = (event.target as HTMLSelectElement).value;
+    this.filterSelected = selectValue.toLocaleLowerCase();
+
+    if (selectValue === '') {
+      this.filteredSales = this.sales;
+      return;
+    }
+
+    const productsFiltered = this.sales.filter(
+      (sale) =>
+        sale.type?.toLocaleLowerCase() === selectValue.toLocaleLowerCase()
+    );
+    this.filteredSales = productsFiltered;
+  }
+
+  generatePDF() {
+    const content = this.salesDiv.nativeElement;
+    const htmlContent = content.innerHTML;
+
+    const doc = new jsPDF({
+      orientation: 'landscape',
+      unit: 'mm',
+      format: 'a4',
+    });
+    doc.html(htmlContent, {
+      callback: (pdf) => {
+        const filename = 'sales.pdf';
+        const numElements = this.filteredSales.length;
+        const numPagesToKeep = numElements / 3;
+        const numTotalPages = pdf.internal.pages.length;
+
+        // Elimina las páginas en blanco después del número deseado
+        for (let i = numPagesToKeep; i < numTotalPages; i++) {
+          pdf.deletePage(numPagesToKeep);
+        }
+
+        pdf.save('sales.pdf');
+        const link = document.createElement('a');
+        const blob = pdf.output('blob');
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        link.click();
       },
     });
   }

@@ -194,23 +194,50 @@
     </div>
 
     <div class="col-8 list-group mx-3">
-      <div class="list-group-item d-flex">
-        <p class="col-2">
-          <span>Units</span>
-        </p>
-        <p class="col-4">Invoice Number</p>
-        <p class="col-3">Product</p>
-        <p class="col-3">Total</p>
+      <div class="d-flex">
+        <select
+          class="col-6"
+          name="saleType"
+          id="saleType"
+          (change)="filterSales($event)"
+        >
+          <option value="">All</option>
+          <option value="final customer">Final Customer</option>
+          <option value="reseller">Reseller</option>
+        </select>
+
+        <button
+          type="button"
+          class="btn btn-primary col-6"
+          (click)="generatePDF()"
+        >
+          Generate PDF
+        </button>
       </div>
-      <div class="list-group-item d-flex" *ngFor="let sale of sales">
-        <p class="col-2">
-          <span class="p-1 rounded-circle text-white bg-primary">{{
-            sale.quantity
-          }}</span>
-        </p>
-        <p class="col-4">{{ sale.invoiceNumber }}</p>
-        <p class="col-3">{{ sale.productName }}</p>
-        <p class="col-3">{{ getTotalSale(sale) }}</p>
+
+      <div #salesDiv class="d-flex pdf-content">
+        <table class="table">
+          <thead class="thead-dark">
+            <tr>
+              <th class="col-1">Units</th>
+              <th class="col-2">Invoice Number</th>
+              <th class="col-3">Product</th>
+              <th class="col-2">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let sale of filteredSales">
+              <td class="col-1">
+                <span class="p-1 rounded-circle text-white bg-primary">{{
+                  sale.quantity
+                }}</span>
+              </td>
+              <td class="col-2">{{ sale.invoiceNumber }}</td>
+              <td class="col-3">{{ sale.productName }}</td>
+              <td class="col-2">{{ getTotalSale(sale) }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>

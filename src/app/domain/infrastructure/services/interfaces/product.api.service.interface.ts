@@ -12,7 +12,7 @@ export interface IProductApiService {
   ): Observable<CommandResponse>;
 
   registerInventoryStock(
-    inventoryStock: IRegisterInventoryRequest
+    inventoryStocks: IRegisterInventoryRequest[]
   ): Observable<CommandResponse>;
 
   registerFinalCustomerSale(

@@ -12,7 +12,7 @@ export class RegisterProductInventoryStockUseCase {
     private readonly productService: IProductApiService
   ) {}
 
-  execute(product: IRegisterInventoryRequest): Observable<CommandResponse> {
-    return this.productService.registerInventoryStock(product);
+  execute(products: IRegisterInventoryRequest[]): Observable<CommandResponse> {
+    return this.productService.registerInventoryStock(products);
   }
 }
