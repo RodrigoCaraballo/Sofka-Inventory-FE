@@ -11,4 +11,6 @@ export interface IBranchApiService {
   ): Observable<IRegisterBranchResponse>;
 
   getBranch(branchId: string): Observable<IBranch>;
+
+  getBranches(): Observable<IBranch[]>;
 }

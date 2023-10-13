@@ -37,8 +37,14 @@ export class LoginComponent {
 
     this.authUseCase.execute(this.loginForm.value as AuthData).subscribe({
       next: (token: AuthReponse) => {
-        const tokenData: JWTModel = jwt_decode(token.token);
-        localStorage.setItem('token', JSON.stringify(tokenData));
+        localStorage.setItem('token', token.token);
+        const parsedToken: JWTModel = jwt_decode(token.token);
+
+        if (parsedToken.userRole === 'super admin') {
+          this.router.navigateByUrl('/home/branches');
+          return;
+        }
+
         this.router.navigateByUrl('/home/products');
       },
       error: (error: HttpErrorResponse) => {

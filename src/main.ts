@@ -8,6 +8,7 @@ declare global {
       COMMAND_API: string;
       QUERY_API: string;
       SOCKET_API: string;
+      AUTH_API: string;
     };
   }
 }

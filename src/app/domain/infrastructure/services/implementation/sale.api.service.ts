@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ISale } from 'src/app/domain/domain';
@@ -11,8 +11,14 @@ export class SaleApiService implements ISaleApiService {
   constructor(private readonly httpClient: HttpClient) {}
 
   getSales(saleId: string): Observable<ISale[]> {
+    const token = localStorage.getItem('token');
     return this.httpClient.get<ISale[]>(
-      `${this.URL_SALES_QUERY}/sales/${saleId}`
+      `${this.URL_SALES_QUERY}/sales/${saleId}`,
+      {
+        headers: new HttpHeaders({
+          Authorization: `Bearer ${token}`,
+        }),
+      }
     );
   }
 }

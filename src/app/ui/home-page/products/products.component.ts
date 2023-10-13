@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import jwt_decode from 'jwt-decode';
 import { RegisterProductInventoryStockUseCase } from 'src/app/domain/application/register-product-inventory-stock.use-case';
 import { RegisterProductUseCase } from 'src/app/domain/application/register-product.use-case';
 import {
@@ -23,6 +24,7 @@ export class ProductsComponent implements OnInit {
   products?: IProduct[];
   addStockOn: boolean = false;
   errorMessage?: string;
+  decodeUser?: JWTModel;
 
   registerProductForm = this.formBuilder.group({
     name: [
@@ -54,7 +56,8 @@ export class ProductsComponent implements OnInit {
   ngOnInit(): void {
     const token = localStorage.getItem('token');
     if (!token) return;
-    const parsedToken: JWTModel = JSON.parse(token);
+    const parsedToken: JWTModel = jwt_decode(token);
+    this.decodeUser = parsedToken;
 
     this.loadBranch();
     this.socketService
@@ -88,11 +91,8 @@ export class ProductsComponent implements OnInit {
   }
 
   loadBranch() {
-    const token = localStorage.getItem('token');
-    if (!token) return;
-
-    const parsedToken: JWTModel = JSON.parse(token);
-    this.getBranchUseCase.execute(parsedToken.branchId).subscribe({
+    if (!this.decodeUser) return;
+    this.getBranchUseCase.execute(this.decodeUser.branchId).subscribe({
       next: (branch: IBranch) => {
         this.products = branch.products;
       },
@@ -100,12 +100,9 @@ export class ProductsComponent implements OnInit {
   }
 
   registerProduct() {
-    const token = localStorage.getItem('token');
-    if (!token) return;
+    if (!this.decodeUser) return;
 
-    const parsedToken: JWTModel = JSON.parse(token);
-
-    this.registerProductForm.patchValue({ branchId: parsedToken.branchId });
+    this.registerProductForm.patchValue({ branchId: this.decodeUser.branchId });
 
     if (!this.registerProductForm.valid) {
       this.registerProductForm.markAllAsTouched();
@@ -141,10 +138,7 @@ export class ProductsComponent implements OnInit {
   }
 
   addInventoryStock() {
-    const token = localStorage.getItem('token');
-    if (!token) return;
-
-    const parsedToken: JWTModel = JSON.parse(token);
+    if (!this.decodeUser) return;
 
     if (
       !this.registerInventoryStockForm.valid ||
@@ -156,7 +150,7 @@ export class ProductsComponent implements OnInit {
     }
 
     const formData: IRegisterInventoryRequest = {
-      branchId: parsedToken.branchId,
+      branchId: this.decodeUser.branchId,
       product: {
         id: this.registerInventoryStockForm.value.id,
         inventoryStock: parseInt(

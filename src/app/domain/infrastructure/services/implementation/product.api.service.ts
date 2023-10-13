@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
@@ -17,35 +17,59 @@ export class ProductApiService implements IProductApiService {
   registerFinalCustomerSale(
     sale: IRegisterSaleRequest
   ): Observable<CommandResponse> {
+    const token = localStorage.getItem('token');
     return this.httpClient.post<CommandResponse>(
       `${this.URL_BRANCH_COMMAND}/customer-sale`,
-      sale
+      sale,
+      {
+        headers: new HttpHeaders({
+          Authorization: `Bearer ${token}`,
+        }),
+      }
     );
   }
   registerResellerSale(
     sale: IRegisterSaleRequest
   ): Observable<CommandResponse> {
+    const token = localStorage.getItem('token');
     return this.httpClient.post<CommandResponse>(
       `${this.URL_BRANCH_COMMAND}/reseller-sale`,
-      sale
+      sale,
+      {
+        headers: new HttpHeaders({
+          Authorization: `Bearer ${token}`,
+        }),
+      }
     );
   }
 
   registerProduct(
     product: IRegisterProductRequest
   ): Observable<CommandResponse> {
+    const token = localStorage.getItem('token');
     return this.httpClient.post<CommandResponse>(
       `${this.URL_BRANCH_COMMAND}/register`,
-      product
+      product,
+      {
+        headers: new HttpHeaders({
+          Authorization: `Bearer ${token}`,
+        }),
+      }
     );
   }
 
   registerInventoryStock(
     inventoryStock: IRegisterInventoryRequest
   ): Observable<CommandResponse> {
+    const token = localStorage.getItem('token');
     return this.httpClient.post<CommandResponse>(
       `${this.URL_BRANCH_COMMAND}/purchase`,
-      inventoryStock
+      inventoryStock,
+      {
+        headers: new HttpHeaders({
+          Authorization: `Bearer ${token}`,
+        }),
+      }
     );
   }
 }

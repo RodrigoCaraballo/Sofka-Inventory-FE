@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
@@ -18,15 +18,36 @@ export class BranchApiService implements IBranchApiService {
   registerBranch(
     newBranch: IRegisterBranchRequest
   ): Observable<IRegisterBranchResponse> {
+    const token = localStorage.getItem('token');
     return this.httpClient.post<IRegisterBranchResponse>(
       `${this.URL_BRANCH_COMMAND}/register`,
-      newBranch
+      newBranch,
+      {
+        headers: new HttpHeaders({
+          Authorization: `Bearer ${token}`,
+        }),
+      }
     );
   }
 
   getBranch(branchId: string): Observable<IBranch> {
+    const token = localStorage.getItem('token');
     return this.httpClient.get<IBranch>(
-      `${this.URL_BRANCH_QUERY}/branch/${branchId}`
+      `${this.URL_BRANCH_QUERY}/branch/${branchId}`,
+      {
+        headers: new HttpHeaders({
+          Authorization: `Bearer ${token}`,
+        }),
+      }
     );
+  }
+
+  getBranches(): Observable<IBranch[]> {
+    const token = localStorage.getItem('token');
+    return this.httpClient.get<IBranch[]>(`${this.URL_BRANCH_QUERY}/branches`, {
+      headers: new HttpHeaders({
+        Authorization: `Bearer ${token}`,
+      }),
+    });
   }
 }

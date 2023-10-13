@@ -1,0 +1,79 @@
+<div class="container my-4">
+  <nav
+    class="col-12 justify-content-start navbar navbar-expand-lg navbar-light bg-light"
+  >
+    <a
+      class="mx-2 nav-link active"
+      *ngIf="decodeUser?.userRole !== 'super admin'"
+      href="/home/products"
+      >Products</a
+    >
+    <a
+      class="mx-2 nav-link active"
+      *ngIf="decodeUser?.userRole !== 'super admin'"
+      href="/home/sales"
+      >Sales</a
+    >
+    <a
+      class="mx-2 nav-link active"
+      *ngIf="decodeUser?.userRole !== 'employee'"
+      href="/home/users"
+      >Users</a
+    >
+    <a
+      class="mx-2 nav-link active"
+      *ngIf="decodeUser?.userRole === 'super admin'"
+      href="/home/branches"
+      >Branch</a
+    >
+  </nav>
+
+  <div *ngIf="errorMessage">
+    <p class="text-danger">{{ errorMessage }}</p>
+  </div>
+  <div *ngIf="successMessage">
+    <p class="text-success">{{ successMessage }}</p>
+  </div>
+
+  <form [formGroup]="branchForm" class="container mt-5 rounded-2 bg-info p-3">
+    <div class="mb-3">
+      <label for="nameInput" class="form-label">Name</label>
+      <input
+        type="text"
+        class="form-control"
+        id="nameInput"
+        aria-describedby="nameInput"
+        formControlName="name"
+        placeholder="Branch Name"
+      />
+    </div>
+
+    <select
+      (change)="getCities($event)"
+      class="form-select mb-3"
+      aria-label="countrySelect"
+      formControlName="country"
+    >
+      <option value="">Select Country</option>
+      <option *ngFor="let country of countries" [value]="country.name">
+        {{ country.name }}
+      </option>
+    </select>
+
+    <select
+      class="form-select mb-3"
+      aria-label="stateSelect"
+      formControlName="city"
+      *ngIf="selectedCountry"
+    >
+      <option selected>Open this select menu</option>
+      <option *ngFor="let state of states" [value]="state.name">
+        {{ state.name }}
+      </option>
+    </select>
+
+    <button type="button" class="btn btn-primary" (click)="registerBranch()">
+      Register
+    </button>
+  </form>
+</div>

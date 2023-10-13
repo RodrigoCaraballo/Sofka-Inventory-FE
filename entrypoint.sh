@@ -12,4 +12,8 @@ if [ -n "$SOCKET_API" ]; then
   sed -i "s/localhost:3004/$SOCKET_API/g" /usr/share/nginx/html/assets/env.js
 fi
 
+if [ -n "$AUTH_API" ]; then
+  sed -i "s/localhost:3005/$AUTH_API/g" /usr/share/nginx/html/assets/env.js
+fi
+
 nginx -g 'daemon off;'

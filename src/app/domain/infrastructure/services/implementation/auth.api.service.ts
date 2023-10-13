@@ -6,13 +6,10 @@ import { IAuthApiService } from '../interfaces/auth.api.service.interface';
 
 @Injectable()
 export class AuthApiService implements IAuthApiService {
-  private URL_BRANCH_COMMAND = `http://${window._env.COMMAND_API}/api/v1/auth`;
+  private URL_AUTH_COMMAND = `http://${window._env.AUTH_API}/api/v1/auth`;
 
   constructor(private readonly httpClient: HttpClient) {}
   auth(auth: AuthData): Observable<AuthReponse> {
-    return this.httpClient.post<AuthReponse>(
-      `${this.URL_BRANCH_COMMAND}`,
-      auth
-    );
+    return this.httpClient.post<AuthReponse>(`${this.URL_AUTH_COMMAND}`, auth);
   }
 }

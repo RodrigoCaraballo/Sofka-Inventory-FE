@@ -1,9 +1,31 @@
 <div class="container my-4">
   <nav
-    class="col-12 navbar justify-content-start navbar-expand-lg navbar-light bg-light"
+    class="col-12 justify-content-start navbar navbar-expand-lg navbar-light bg-light"
   >
-    <a class="mx-2 nav-link active" href="/home/products">Products</a>
-    <a class="mx-2 nav-link active" href="/home/sales">Sales</a>
+    <a
+      class="mx-2 nav-link active"
+      *ngIf="decodeUser?.userRole !== 'super admin'"
+      href="/home/products"
+      >Products</a
+    >
+    <a
+      class="mx-2 nav-link active"
+      *ngIf="decodeUser?.userRole !== 'super admin'"
+      href="/home/sales"
+      >Sales</a
+    >
+    <a
+      class="mx-2 nav-link active"
+      *ngIf="decodeUser?.userRole !== 'employee'"
+      href="/home/users"
+      >Users</a
+    >
+    <a
+      class="mx-2 nav-link active"
+      *ngIf="decodeUser?.userRole === 'super admin'"
+      href="/home/branches"
+      >Branch</a
+    >
   </nav>
   <div class="container d-flex my-4" *ngIf="sales">
     <div class="col-4 mx-3">

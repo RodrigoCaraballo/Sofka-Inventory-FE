@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import jwt_decode from 'jwt-decode';
 import { GetBranchUseCase } from 'src/app/domain/application/get-branch.use-case';
 import { GetSalesUseCase } from 'src/app/domain/application/get-sales.use-case';
 import { RegisterResellerSaleUseCase } from 'src/app/domain/application/register-reseller-sale.use-case';
@@ -25,6 +26,7 @@ import { RegisterFinalCustomerSaleUseCase } from '../../../domain/application/re
 export class SalesComponent implements OnInit {
   sales: ISale[] = [];
   products: IProduct[] = [];
+  decodeUser?: JWTModel;
 
   errorMessage?: string;
 
@@ -42,7 +44,8 @@ export class SalesComponent implements OnInit {
   ngOnInit(): void {
     const token = localStorage.getItem('token');
     if (!token) return;
-    const parsedToken: JWTModel = JSON.parse(token);
+    const parsedToken: JWTModel = jwt_decode(token);
+    this.decodeUser = parsedToken;
 
     this.loadBranch();
     this.loadSales();
@@ -71,11 +74,8 @@ export class SalesComponent implements OnInit {
   });
 
   loadBranch() {
-    const token = localStorage.getItem('token');
-    if (!token) return;
-
-    const parsedToken: JWTModel = JSON.parse(token);
-    this.getBranchUseCase.execute(parsedToken.branchId).subscribe({
+    if (!this.decodeUser) return;
+    this.getBranchUseCase.execute(this.decodeUser.branchId).subscribe({
       next: (branch: IBranch) => {
         this.products = branch.products;
       },
@@ -83,11 +83,8 @@ export class SalesComponent implements OnInit {
   }
 
   loadSales() {
-    const token = localStorage.getItem('token');
-    if (!token) return;
-
-    const parsedToken: JWTModel = JSON.parse(token);
-    this.getSalesUseCase.execute(parsedToken.branchId).subscribe({
+    if (!this.decodeUser) return;
+    this.getSalesUseCase.execute(this.decodeUser.branchId).subscribe({
       next: (sales: ISale[]) => {
         this.sales = sales;
       },
@@ -105,8 +102,6 @@ export class SalesComponent implements OnInit {
       return;
     }
 
-    console.log(this.addProductForm.value.id);
-
     const updateSales = [
       ...this.newSales,
       this.addProductForm.value as unknown as ProductInventoryData,
@@ -121,10 +116,7 @@ export class SalesComponent implements OnInit {
   }
 
   registerSale() {
-    const token = localStorage.getItem('token');
-    if (!token) return;
-
-    const parsedToken: JWTModel = JSON.parse(token);
+    if (!this.decodeUser) return;
 
     if (
       !this.registerSaleForm.value.invoiceNumber ||
@@ -135,7 +127,7 @@ export class SalesComponent implements OnInit {
     }
 
     const request: IRegisterSaleRequest = {
-      branchId: parsedToken.branchId,
+      branchId: this.decodeUser.branchId,
       invoiceNumber: this.registerSaleForm.value.invoiceNumber,
       products: this.newSales,
     };
@@ -150,12 +142,10 @@ export class SalesComponent implements OnInit {
   registerResellerSale(request: IRegisterSaleRequest) {
     this.registerResellerSaleUseCase.execute(request).subscribe({
       next: (response: CommandResponse) => {
-        console.log(response);
         this.registerSaleForm.reset();
+        this.newSales = [];
       },
       error: (response: HttpErrorResponse) => {
-        console.log(response);
-
         if (response.error?.message) {
           this.errorMessage = response.error.message;
           setTimeout(() => {
@@ -177,8 +167,8 @@ export class SalesComponent implements OnInit {
   registerFinalCustomerSale(request: IRegisterSaleRequest) {
     this.registerFinalCustomerSaleUseCase.execute(request).subscribe({
       next: (response: CommandResponse) => {
-        console.log(response);
         this.registerSaleForm.reset();
+        this.newSales = [];
       },
       error: (response: HttpErrorResponse) => {
         if (response.error?.message) {

@@ -1,4 +1,5 @@
 import { IProduct } from './product.model';
+import { IUser } from './user.model';
 
 export interface IRegisterBranchRequest {
   name: string;
@@ -12,6 +13,7 @@ export interface IBranch {
   country?: string;
   city?: string;
   products: IProduct[];
+  employees?: IUser[];
 }
 
 export interface IRegisterBranchResponse {

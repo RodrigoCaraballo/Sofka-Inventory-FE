@@ -7,6 +7,7 @@ export interface JWTModel {
   userId: string;
   userRole: string;
   branchId: string;
+  exp: number;
 }
 
 export interface AuthReponse {

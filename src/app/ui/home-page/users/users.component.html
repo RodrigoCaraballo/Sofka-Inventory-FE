@@ -1,0 +1,277 @@
+<div class="container my-4">
+  <nav
+    class="col-12 justify-content-start navbar navbar-expand-lg navbar-light bg-light"
+  >
+    <a
+      class="mx-2 nav-link active"
+      *ngIf="decodeUser?.userRole !== 'super admin'"
+      href="/home/products"
+      >Products</a
+    >
+    <a
+      class="mx-2 nav-link active"
+      *ngIf="decodeUser?.userRole !== 'super admin'"
+      href="/home/sales"
+      >Sales</a
+    >
+    <a
+      class="mx-2 nav-link active"
+      *ngIf="decodeUser?.userRole !== 'employee'"
+      href="/home/users"
+      >Users</a
+    >
+    <a
+      class="mx-2 nav-link active"
+      *ngIf="decodeUser?.userRole === 'super admin'"
+      href="/home/branches"
+      >Branch</a
+    >
+  </nav>
+  <div
+    class="container d-flex my-4"
+    *ngIf="decodeUser?.userRole !== 'employee'"
+  >
+    <div class="col-4 mx-2">
+      <div *ngIf="errorMessage">
+        <p class="text-danger">{{ errorMessage }}</p>
+      </div>
+      <div *ngIf="successMessage">
+        <p class="text-success">{{ successMessage }}</p>
+      </div>
+
+      <form
+        [formGroup]="registerUserForm"
+        (submit)="registerUser()"
+        class="mt-2"
+      >
+        <h3>Register User</h3>
+        <div class="mb-3">
+          <label for="userName" class="form-label">Name:</label>
+          <input
+            type="text"
+            id="userName"
+            name="userName"
+            formControlName="name"
+            class="form-control"
+            required
+          />
+          <div
+            *ngIf="
+              registerUserForm.get('name')?.hasError('required') &&
+              registerUserForm.get('name')?.touched
+            "
+            class="text-danger"
+          >
+            Name is Required.
+          </div>
+          <div
+            *ngIf="
+              registerUserForm.get('name')?.hasError('minlength') &&
+              registerUserForm.get('name')?.touched
+            "
+            class="text-danger"
+          >
+            Name require at least 3 characters.
+          </div>
+          <div
+            *ngIf="
+              registerUserForm.get('name')?.hasError('maxlength') &&
+              registerUserForm.get('name')?.touched
+            "
+            class="text-danger"
+          >
+            Name limit 100 characters.
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="userLastname" class="form-label">Lastname:</label>
+          <input
+            type="text"
+            id="userLastname"
+            name="userLastname"
+            formControlName="lastName"
+            class="form-control"
+            required
+          />
+          <div
+            *ngIf="
+              registerUserForm.get('lastName')?.hasError('required') &&
+              registerUserForm.get('lastName')?.touched
+            "
+            class="text-danger"
+          >
+            Lastname is Required.
+          </div>
+          <div
+            *ngIf="
+              registerUserForm.get('lastName')?.hasError('minlength') &&
+              registerUserForm.get('lastName')?.touched
+            "
+            class="text-danger"
+          >
+            Lastname require at least 3 characters.
+          </div>
+          <div
+            *ngIf="
+              registerUserForm.get('lastName')?.hasError('maxlength') &&
+              registerUserForm.get('lastName')?.touched
+            "
+            class="text-danger"
+          >
+            Lastname limit 100 characters.
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="email" class="form-label">Email:</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            formControlName="email"
+            class="form-control"
+            required
+          />
+          <div
+            *ngIf="
+              registerUserForm.get('email')?.hasError('required') &&
+              registerUserForm.get('email')?.touched
+            "
+            class="text-danger"
+          >
+            Email is Required.
+          </div>
+          <div
+            *ngIf="
+              registerUserForm.get('email')?.hasError('email') &&
+              registerUserForm.get('email')?.touched
+            "
+            class="text-danger"
+          >
+            Email is Invalid.
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="password" class="form-label">Password:</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            formControlName="password"
+            class="form-control"
+            required
+          />
+          <div
+            *ngIf="
+              registerUserForm.get('password')?.hasError('required') &&
+              registerUserForm.get('password')?.touched
+            "
+            class="text-danger"
+          >
+            Email is Required.
+          </div>
+          <div
+            *ngIf="
+              registerUserForm.get('password')?.hasError('minlength') &&
+              registerUserForm.get('password')?.touched
+            "
+            class="text-danger"
+          >
+            Password min length is 8
+          </div>
+          <div
+            *ngIf="
+              registerUserForm.get('password')?.hasError('maxlength') &&
+              registerUserForm.get('password')?.touched
+            "
+            class="text-danger"
+          >
+            Password min length is 8
+          </div>
+          <div
+            *ngIf="
+              registerUserForm.get('password')?.hasError('pattern') &&
+              registerUserForm.get('password')?.touched
+            "
+            class="text-danger"
+          >
+            Password require at least 1 Mayus, 1 Minus and 1 Number
+          </div>
+        </div>
+
+        <label for="userRole" class="form-label">Role:</label>
+        <select
+          id="userRole"
+          name="userRole"
+          formControlName="role"
+          class="form-control"
+          required
+        >
+          <option value="">Select Role</option>
+          <option value="admin">Admin</option>
+          <option value="employee">Employee</option>
+        </select>
+        <div
+          *ngIf="
+            registerUserForm.get('role')?.hasError('required') &&
+            registerUserForm.get('role')?.touched
+          "
+          class="text-danger"
+        >
+          Role is Required.
+        </div>
+
+        <div class="mb-3" *ngIf="decodeUser?.userRole === 'super admin'">
+          <label for="userBranch" class="form-label">Branch:</label>
+          <select
+            id="userBranch"
+            name="userBranch"
+            formControlName="branchId"
+            class="form-control"
+            required
+          >
+            <option value="">Select Branch</option>
+            <option *ngFor="let branch of branches" [value]="branch.id">
+              {{ branch.name }}
+            </option>
+          </select>
+          <div
+            *ngIf="
+              registerUserForm.get('branchId')?.hasError('required') &&
+              registerUserForm.get('branchId')?.touched
+            "
+            class="text-danger"
+          >
+            Branch is Required.
+          </div>
+        </div>
+
+        <div class="mb-3 mt-3">
+          <button type="submit" class="btn btn-primary">Register User</button>
+        </div>
+      </form>
+    </div>
+
+    <div
+      class="col-8 list-group mx-2 mt-2"
+      *ngIf="users && decodeUser?.userRole === 'admin'"
+    >
+      <h3>Employees</h3>
+      <div class="list-group-item d-flex">
+        <p class="col-4 text-uppercase">Name</p>
+        <p class="col-4 text-uppercase">Lastname</p>
+      </div>
+      <div class="list-group-item d-flex" *ngFor="let user of users">
+        <p class="col-4">
+          {{ user.name }}
+        </p>
+        <p class="col-4">{{ user.lastName }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="!decodeUser">
+  <p>Loading ...</p>
+</div>
