@@ -9,6 +9,7 @@ import { RegisterFinalCustomerSaleUseCase } from 'src/app/domain/application/reg
 import { RegisterProductInventoryStockUseCase } from 'src/app/domain/application/register-product-inventory-stock.use-case';
 import { RegisterProductUseCase } from 'src/app/domain/application/register-product.use-case';
 import { RegisterResellerSaleUseCase } from 'src/app/domain/application/register-reseller-sale.use-case';
+import { RegisterReturnSaleUseCase } from 'src/app/domain/application/register-return-sale.use-case';
 import { RegisterUserUseCase } from 'src/app/domain/application/register-user.use-case';
 import {
   BranchApiService,
@@ -22,6 +23,7 @@ import { SaleApiService } from 'src/app/domain/infrastructure/services/implement
 import { UserApiService } from 'src/app/domain/infrastructure/services/implementation/user.api.service';
 import { BranchComponent } from './branch/branch.component';
 import { HomePageRoutingModule } from './home-page.routing.module';
+import { NavBarComponent } from './nav-bar/nav-bar.component';
 import { ProductsComponent } from './products/products.component';
 import { SalesComponent } from './sales/sales.component';
 import { UsersComponent } from './users/users.component';
@@ -32,6 +34,7 @@ import { UsersComponent } from './users/users.component';
     ProductsComponent,
     UsersComponent,
     BranchComponent,
+    NavBarComponent,
   ],
   imports: [CommonModule, HomePageRoutingModule, ReactiveFormsModule],
   providers: [
@@ -44,6 +47,7 @@ import { UsersComponent } from './users/users.component';
     RegisterUserUseCase,
     GetBranchesUseCase,
     RegisterBranchUseCase,
+    RegisterReturnSaleUseCase,
     {
       provide: HTTP_BRANCH_SERVICE,
       useClass: BranchApiService,

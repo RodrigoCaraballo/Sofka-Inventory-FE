@@ -2,10 +2,13 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { jsPDF } from 'jspdf';
+import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 import jwt_decode from 'jwt-decode';
 import { GetBranchUseCase } from 'src/app/domain/application/get-branch.use-case';
 import { GetSalesUseCase } from 'src/app/domain/application/get-sales.use-case';
 import { RegisterResellerSaleUseCase } from 'src/app/domain/application/register-reseller-sale.use-case';
+import { RegisterReturnSaleUseCase } from 'src/app/domain/application/register-return-sale.use-case';
 import {
   CommandResponse,
   IBranch,
@@ -14,6 +17,7 @@ import {
   ISale,
   ISaleSocketResponse,
   ProductInventoryData,
+  RegisterReturnSaleData,
 } from 'src/app/domain/domain';
 import { JWTModel } from 'src/app/domain/domain/auth.model';
 import { SocketApiService } from 'src/app/domain/infrastructure';
@@ -41,7 +45,8 @@ export class SalesComponent implements OnInit {
     private readonly getSalesUseCase: GetSalesUseCase,
     private readonly registerFinalCustomerSaleUseCase: RegisterFinalCustomerSaleUseCase,
     private readonly registerResellerSaleUseCase: RegisterResellerSaleUseCase,
-    private readonly socketService: SocketApiService
+    private readonly socketService: SocketApiService,
+    private readonly registerReturnSaleUseCase: RegisterReturnSaleUseCase
   ) {}
 
   ngOnInit(): void {
@@ -77,6 +82,38 @@ export class SalesComponent implements OnInit {
           return;
         } else {
           this.filteredSales = [...newSales, ...this.filteredSales];
+        }
+      });
+
+    this.socketService
+      .listenToEvent(`return_sale_${parsedToken.branchId}`)
+      .subscribe((data) => {
+        const returnSale = JSON.parse(data) as RegisterReturnSaleData;
+
+        if (!this.products) return;
+
+        const newSales = this.sales.filter((s) => s.id !== returnSale.saleId);
+        this.sales = newSales;
+
+        if (this.filterSelected === 'final customer') {
+          const finalCustomerSales = this.filteredSales.filter(
+            (s) => s.id !== returnSale.saleId
+          );
+
+          this.filteredSales = finalCustomerSales;
+          return;
+        } else if (this.filterSelected === 'reseller') {
+          const resellerSales = this.filteredSales.filter(
+            (s) => s.id !== returnSale.saleId
+          );
+
+          this.filteredSales = resellerSales;
+          return;
+        } else {
+          const sales = this.filteredSales.filter(
+            (s) => s.id !== returnSale.saleId
+          );
+          this.filteredSales = sales;
         }
       });
   }
@@ -227,33 +264,125 @@ export class SalesComponent implements OnInit {
     this.filteredSales = productsFiltered;
   }
 
-  generatePDF() {
-    const content = this.salesDiv.nativeElement;
-    const htmlContent = content.innerHTML;
+  generateAllSalePDF() {
+    const doc = new jsPDF();
 
-    const doc = new jsPDF({
-      orientation: 'landscape',
-      unit: 'mm',
-      format: 'a4',
+    doc.text('Lista de Ventas', 10, 10);
+
+    const columns = [
+      'Invoice Number',
+      'Name',
+      'Price',
+      'Quantity',
+      'Total',
+      'Type',
+    ];
+
+    let sales = this.sales;
+    if (this.filterSelected !== '') {
+      sales = this.sales.filter(
+        (s) =>
+          s.type.toLocaleUpperCase() === this.filterSelected.toLocaleUpperCase()
+      );
+    }
+
+    const data = sales.map((sale, index) => [
+      sale.invoiceNumber,
+      sale.productName,
+      sale.productPrice,
+      sale.quantity?.toString(),
+      (sale.quantity || 1) * (sale.productPrice || 1),
+      sale.type,
+    ]);
+
+    autoTable(doc, {
+      head: [columns],
+      body: data,
     });
-    doc.html(htmlContent, {
-      callback: (pdf) => {
-        const filename = 'sales.pdf';
-        const numElements = this.filteredSales.length;
-        const numPagesToKeep = numElements / 3;
-        const numTotalPages = pdf.internal.pages.length;
 
-        // Elimina las páginas en blanco después del número deseado
-        for (let i = numPagesToKeep; i < numTotalPages; i++) {
-          pdf.deletePage(numPagesToKeep);
-        }
+    doc.save('sales_list.pdf');
+  }
 
-        pdf.save('sales.pdf');
-        const link = document.createElement('a');
-        const blob = pdf.output('blob');
-        link.href = URL.createObjectURL(blob);
-        link.download = filename;
-        link.click();
+  exportTotalSalesPDF() {
+    const doc = new jsPDF();
+
+    doc.text('Lista de Ventas', 10, 10);
+
+    const columns = ['Product Name', 'Total Units', 'Total $'];
+
+    let totalResume: {
+      productName: string;
+      totalQuantity: number;
+      totalPrice: number;
+    }[] = [];
+    this.sales.forEach((sale) => {
+      const { productName, productPrice, quantity } = sale;
+
+      const saleTotal = totalResume.find(
+        (totalSale) => totalSale.productName === productName
+      );
+
+      if (!saleTotal) {
+        const newTotalSale = {
+          productName,
+          totalPrice: parseFloat(productPrice.toString()),
+          totalQuantity: quantity,
+        };
+        totalResume = [...totalResume, newTotalSale];
+      } else {
+        const newTotal = totalResume.map((totalSale) => {
+          if (totalSale.productName === productName) {
+            totalSale.totalQuantity += quantity;
+            totalSale.totalPrice += parseFloat(productPrice.toString());
+            return totalSale;
+          }
+
+          return totalSale;
+        });
+
+        totalResume = newTotal;
+      }
+    });
+
+    const data = totalResume.map((sale, index) => [
+      sale.productName,
+      sale.totalQuantity,
+      `$ ${sale.totalPrice}`,
+    ]);
+
+    autoTable(doc, {
+      head: [columns],
+      body: data,
+    });
+
+    console.log('After');
+
+    doc.save('total_sales.pdf');
+  }
+
+  registerReturnSale(sale: ISale) {
+    const product = this.products.find((p) => p.name === sale.productName);
+    console.log(product);
+
+    if (!product?.id || !sale?.invoiceNumber || !sale?.id || !sale.quantity) {
+      console.log('Product not found');
+
+      return;
+    }
+    const data: RegisterReturnSaleData = {
+      branchId: this.decodeUser!.branchId,
+      productId: product.id,
+      invoiceNumber: sale.invoiceNumber,
+      saleId: sale.id,
+      inventoryStock: sale.quantity,
+    };
+
+    this.registerReturnSaleUseCase.execute(data).subscribe({
+      next: () => {
+        console.log('OK');
+      },
+      error: (error: HttpErrorResponse) => {
+        console.log(error);
       },
     });
   }

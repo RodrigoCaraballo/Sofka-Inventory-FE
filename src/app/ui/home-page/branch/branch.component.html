@@ -1,32 +1,5 @@
 <div class="container my-4">
-  <nav
-    class="col-12 justify-content-start navbar navbar-expand-lg navbar-light bg-light"
-  >
-    <a
-      class="mx-2 nav-link active"
-      *ngIf="decodeUser?.userRole !== 'super admin'"
-      href="/home/products"
-      >Products</a
-    >
-    <a
-      class="mx-2 nav-link active"
-      *ngIf="decodeUser?.userRole !== 'super admin'"
-      href="/home/sales"
-      >Sales</a
-    >
-    <a
-      class="mx-2 nav-link active"
-      *ngIf="decodeUser?.userRole !== 'employee'"
-      href="/home/users"
-      >Users</a
-    >
-    <a
-      class="mx-2 nav-link active"
-      *ngIf="decodeUser?.userRole === 'super admin'"
-      href="/home/branches"
-      >Branch</a
-    >
-  </nav>
+  <app-nav-bar></app-nav-bar>
 
   <div *ngIf="errorMessage">
     <p class="text-danger">{{ errorMessage }}</p>

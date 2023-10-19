@@ -19,9 +19,4 @@ export class SocketApiService implements ISocketApiService {
       });
     });
   }
-
-  emitConfirmationEvent(data: any) {
-    // Puedes personalizar el nombre del evento de confirmación
-    this.socket.emit('confirmacion_evento', data);
-  }
 }

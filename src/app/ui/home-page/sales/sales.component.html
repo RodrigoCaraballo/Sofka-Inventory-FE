@@ -1,32 +1,5 @@
 <div class="container my-4">
-  <nav
-    class="col-12 justify-content-start navbar navbar-expand-lg navbar-light bg-light"
-  >
-    <a
-      class="mx-2 nav-link active"
-      *ngIf="decodeUser?.userRole !== 'super admin'"
-      href="/home/products"
-      >Products</a
-    >
-    <a
-      class="mx-2 nav-link active"
-      *ngIf="decodeUser?.userRole !== 'super admin'"
-      href="/home/sales"
-      >Sales</a
-    >
-    <a
-      class="mx-2 nav-link active"
-      *ngIf="decodeUser?.userRole !== 'employee'"
-      href="/home/users"
-      >Users</a
-    >
-    <a
-      class="mx-2 nav-link active"
-      *ngIf="decodeUser?.userRole === 'super admin'"
-      href="/home/branches"
-      >Branch</a
-    >
-  </nav>
+  <app-nav-bar></app-nav-bar>
   <div class="container d-flex my-4" *ngIf="sales">
     <div class="col-4 mx-3">
       <form [formGroup]="addProductForm" class="mt-2">
@@ -208,10 +181,17 @@
 
         <button
           type="button"
-          class="btn btn-primary col-6"
-          (click)="generatePDF()"
+          class="btn btn-primary col-2 mx-1"
+          (click)="generateAllSalePDF()"
         >
-          Generate PDF
+          PDF Sale List
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary col-3 mx-1"
+          (click)="exportTotalSalesPDF()"
+        >
+          PDF Total Sales
         </button>
       </div>
 
@@ -235,6 +215,14 @@
               <td class="col-2">{{ sale.invoiceNumber }}</td>
               <td class="col-3">{{ sale.productName }}</td>
               <td class="col-2">{{ getTotalSale(sale) }}</td>
+              <td class="col-2">
+                <button
+                  class="btn btn-danger"
+                  (click)="registerReturnSale(sale)"
+                >
+                  Return
+                </button>
+              </td>
             </tr>
           </tbody>
         </table>

@@ -3,6 +3,7 @@ import {
   IRegisterInventoryRequest,
   IRegisterProductRequest,
   IRegisterSaleRequest,
+  RegisterReturnSaleData,
 } from 'src/app/domain/domain';
 import { CommandResponse } from 'src/app/domain/domain/reponse.model';
 
@@ -19,4 +20,8 @@ export interface IProductApiService {
     sale: IRegisterSaleRequest
   ): Observable<CommandResponse>;
   registerResellerSale(sale: IRegisterSaleRequest): Observable<CommandResponse>;
+
+  registerReturnSale(
+    returnSale: RegisterReturnSaleData
+  ): Observable<CommandResponse>;
 }

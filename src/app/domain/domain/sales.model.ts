@@ -4,7 +4,7 @@ export interface ISaleSocketResponse {
   id?: string;
   branchId: string;
   invoiceNumber: string;
-  type?: string;
+  type: string;
   productName: string;
   productPrice: number;
   quantity: number;
@@ -12,15 +12,23 @@ export interface ISaleSocketResponse {
 
 export interface ISale {
   id?: string;
-  invoiceNumber?: string;
-  type?: string;
-  productName?: string;
-  productPrice?: number;
-  quantity?: number;
+  invoiceNumber: string;
+  type: string;
+  productName: string;
+  productPrice: number;
+  quantity: number;
 }
 
 export interface IRegisterSaleRequest {
   branchId: string;
   invoiceNumber: string;
   products: ProductInventoryData[];
+}
+
+export interface RegisterReturnSaleData {
+  branchId: string;
+  saleId: string;
+  productId: string;
+  invoiceNumber: string;
+  inventoryStock: number;
 }

@@ -1,32 +1,5 @@
 <div class="container my-4">
-  <nav
-    class="col-12 justify-content-start navbar navbar-expand-lg navbar-light bg-light"
-  >
-    <a
-      class="mx-2 nav-link active"
-      *ngIf="decodeUser?.userRole !== 'super admin'"
-      href="/home/products"
-      >Products</a
-    >
-    <a
-      class="mx-2 nav-link active"
-      *ngIf="decodeUser?.userRole !== 'super admin'"
-      href="/home/sales"
-      >Sales</a
-    >
-    <a
-      class="mx-2 nav-link active"
-      *ngIf="decodeUser?.userRole !== 'employee'"
-      href="/home/users"
-      >Users</a
-    >
-    <a
-      class="mx-2 nav-link active"
-      *ngIf="decodeUser?.userRole === 'super admin'"
-      href="/home/branches"
-      >Branch</a
-    >
-  </nav>
+  <app-nav-bar></app-nav-bar>
   <div class="container d-flex my-4" *ngIf="products">
     <div class="col-4 mx-2" *ngIf="decodeUser?.userRole === 'admin'">
       <button class="btn btn-primary mx-1" (click)="addStockOn = true">
@@ -283,13 +256,21 @@
           : 'col-8 list-group mx-2'
       "
     >
+      <div class="list-group-item d-flex">
+        <p class="col-2">
+          <span class="p-1">Stock</span>
+        </p>
+        <p class="col-6">Name</p>
+        <p class="col-4">Category</p>
+      </div>
       <div class="list-group-item d-flex" *ngFor="let product of products">
         <p class="col-2">
           <span class="p-1 rounded-circle text-white bg-primary">{{
             product.inventoryStock
           }}</span>
         </p>
-        <p class="col-10">Name: {{ product.name }}</p>
+        <p class="col-6 text-capitalize">{{ product.name }}</p>
+        <p class="col-4 text-capitalize">{{ product.category }}</p>
       </div>
     </div>
   </div>

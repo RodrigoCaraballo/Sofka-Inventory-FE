@@ -37,12 +37,15 @@ export class UsersComponent implements OnInit {
   ngOnInit(): void {
     const token = localStorage.getItem('token');
     if (!token) return;
+
     const parsedToken: JWTModel = jwt_decode(token);
     this.decodeUser = parsedToken;
 
     if (this.decodeUser.userRole === 'super admin') {
+      console.log('Super');
       this.loadBranches();
     } else if (this.decodeUser.userRole === 'admin') {
+      console.log('Admin');
       this.loadBranch();
     }
     this.socketService
@@ -81,9 +84,12 @@ export class UsersComponent implements OnInit {
 
   loadBranch() {
     if (!this.decodeUser) return;
+
     this.getBranchUseCase.execute(this.decodeUser.branchId).subscribe({
       next: (branch: IBranch) => {
         if (branch.employees) {
+          console.log('hola');
+
           this.users = branch.employees;
         }
       },
@@ -116,6 +122,7 @@ export class UsersComponent implements OnInit {
       return;
     }
 
+    console.log('Valid');
     this.registerUserUseCase
       .execute(this.registerUserForm.value as RegisterUserData)
       .subscribe({

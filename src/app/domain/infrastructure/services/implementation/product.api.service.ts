@@ -5,6 +5,7 @@ import {
   IRegisterInventoryRequest,
   IRegisterProductRequest,
   IRegisterSaleRequest,
+  RegisterReturnSaleData,
 } from 'src/app/domain/domain';
 import { CommandResponse } from 'src/app/domain/domain/reponse.model';
 import { IProductApiService } from '../interfaces/product.api.service.interface';
@@ -65,6 +66,21 @@ export class ProductApiService implements IProductApiService {
     return this.httpClient.post<CommandResponse>(
       `${this.URL_BRANCH_COMMAND}/purchase`,
       inventoryStocks,
+      {
+        headers: new HttpHeaders({
+          Authorization: `Bearer ${token}`,
+        }),
+      }
+    );
+  }
+
+  registerReturnSale(
+    returnSale: RegisterReturnSaleData
+  ): Observable<CommandResponse> {
+    const token = localStorage.getItem('token');
+    return this.httpClient.post<CommandResponse>(
+      `${this.URL_BRANCH_COMMAND}/return-sale`,
+      returnSale,
       {
         headers: new HttpHeaders({
           Authorization: `Bearer ${token}`,
