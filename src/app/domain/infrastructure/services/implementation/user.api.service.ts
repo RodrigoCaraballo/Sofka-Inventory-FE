@@ -6,7 +6,7 @@ import { IUserApiService } from '../interfaces/user.api.service.interface';
 
 @Injectable()
 export class UserApiService implements IUserApiService {
-  private URL_USER_QUERY = `http://${window._env.QUERY_API}/api/v1/user`;
+  private URL_USER_QUERY = `http://${window._env.COMMAND_API}/api/v1/user`;
 
   constructor(private readonly httpClient: HttpClient) {}
 
